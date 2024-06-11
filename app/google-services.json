@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "969325702142",
+    "project_id": "due-diligence-28ddc",
+    "storage_bucket": "due-diligence-28ddc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969325702142:android:2f49c8e3400587d5d96eaf",
+        "android_client_info": {
+          "package_name": "com.example.due_diligence"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBi0R1Suf9n_rcvsj-D2w8EkD4lhhk56t8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

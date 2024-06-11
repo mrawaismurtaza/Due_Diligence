@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".ActivityClasses.Signup">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="324dp"
+        android:layout_height="595dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.62">
+
+        <RadioGroup
+            android:layout_marginTop="350dp"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/teacherrdbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="20dp"
+                android:text="Teacher" />
+
+            <RadioButton
+                android:id="@+id/studentrdbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="40dp"
+                android:text="Student" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="157dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="450dp"
+            android:background="#DCAA17"
+            android:onClick="Continue"
+            android:text="Continue"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/signupnameedt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="75dp"
+            android:ems="10"
+            android:hint="Enter Name"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/signupemailedt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="150dp"
+            android:ems="10"
+            android:hint="Enter Email"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/signuppassedt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="225dp"
+            android:ems="10"
+            android:hint="Enter Password"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/signupconfirmpassedt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="300dp"
+            android:ems="10"
+            android:hint="Confirm Password"
+            android:inputType="text" />
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription,ImageContrastCheck"
+        app:srcCompat="@drawable/profile_pic" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
