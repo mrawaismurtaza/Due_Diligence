@@ -1,8 +1,9 @@
 package com.example.due_diligence.ModelClasses;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Project {
+public class Project implements Serializable {
     private String name;
     private String description;
     private String supervisor;

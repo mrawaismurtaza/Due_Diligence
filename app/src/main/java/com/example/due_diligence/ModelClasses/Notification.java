@@ -3,7 +3,6 @@ package com.example.due_diligence.ModelClasses;
 public class Notification {
     private String message;
     private Boolean isRead;
-    private String userId;
 
     public String getMessage() {
         return message;
@@ -21,17 +20,8 @@ public class Notification {
         isRead = read;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public Notification(String message, Boolean isRead, String userId) {
+    public Notification(String message, Boolean isRead) {
         this.message = message;
         this.isRead = isRead;
-        this.userId = userId;
     }
 }

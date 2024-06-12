@@ -1,4 +1,4 @@
-package com.example.due_diligence.ActivityClasses;
+package com.example.due_diligence.Registration_Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

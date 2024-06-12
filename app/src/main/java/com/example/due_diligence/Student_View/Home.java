@@ -1,19 +1,26 @@
 package com.example.due_diligence.Student_View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.example.due_diligence.Adapter_Classes.Adapter_Home_Projects;
 import com.example.due_diligence.Firebase.Authentication;
 import com.example.due_diligence.Firebase.Realtime_Database;
+import com.example.due_diligence.ModelClasses.Project;
 import com.example.due_diligence.ModelClasses.User;
 import com.example.due_diligence.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.List;
 
 public class Home extends AppCompatActivity {
 
@@ -56,10 +63,39 @@ public class Home extends AppCompatActivity {
             });
 
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            database.getProjects(userId, new Realtime_Database.ProjectCallback() {
+                @Override
+                public void onProjectCallback(List<Project> projects) {
+                    Adapter_Home_Projects adapter = new Adapter_Home_Projects(Home.this, projects);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+
+                    adapter.setOnItemClickListener(new Adapter_Home_Projects.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Intent intent = new Intent(Home.this, Project_Details.class);
+                            Project selectedProject = projects.get(position);
+                            if (selectedProject != null) {
+                                Log.d("TAG", "onItemClick: " + selectedProject.getName());
+                                intent.putExtra("project", selectedProject);
+                                startActivity(intent);
+                            } else {
+                                Snackbar.make(getCurrentFocus(), "Project not found", Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            });
 
         } else {
             Snackbar.make(this.getCurrentFocus(), "User not found", Snackbar.LENGTH_SHORT).show();
         }
     }
 
+
+    public void Project_Request(View view) {
+        Intent intent = new Intent(this, Project_Request.class);
+        startActivity(intent);
+    }
 }
