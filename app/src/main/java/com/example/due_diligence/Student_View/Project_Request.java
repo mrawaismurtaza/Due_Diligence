@@ -54,13 +54,18 @@ public class Project_Request extends AppCompatActivity {
             storage = new Cloud_Storage();
             database = new Realtime_Database();
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-            storage.uploadFile(fileUri, userId, new Cloud_Storage.UploadCallback() {
+            database.createProject(userId, "description", projectName.getText().toString(), TeacherEmail.getText().toString(), memberEmail.getText().toString(), new Realtime_Database.ProjectCreateCallback() {
                 @Override
-                public void onUploadCallback(String url) {
-//                    database.sendRequest(userId, TeacherEmail.getText().toString(), memberEmail.getText().toString(), projectName.getText().toString(), url);
+                public void onProjectCallback(String projectId) {
+                    storage.uploadFile(fileUri, userId, projectId, new Cloud_Storage.UploadCallback() {
+                        @Override
+                        public void onUploadCallback(String url) {
+                            finish();
+                        }
+                    });
                 }
             });
+
         }
     }
 }

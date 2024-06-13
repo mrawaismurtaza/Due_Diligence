@@ -82,6 +82,15 @@ public class Realtime_Database {
         });
     }
 
+    public void createProject(String userId, String description, String string, String string1, String string2, Realtime_Database.ProjectCreateCallback projectCreateCallback) {
+        String projectId = projectsRef.child(userId).push().getKey();
+        Task task1 = new Task("Proposal", "completed");
+        List<Task> taskList = new ArrayList<>();
+        Project project = new Project(string, description, string1, taskList);
+        projectsRef.child(userId).child(projectId).setValue(project);
+        projectCreateCallback.onProjectCallback(projectId);
+    }
+
 
     //For getting User Deatails from REALTIME
 
@@ -139,5 +148,9 @@ public class Realtime_Database {
 
     public interface ProjectCallback {
         void onProjectCallback(List<Project> projects);
+    }
+
+    public interface ProjectCreateCallback {
+        void onProjectCallback(String projectId);
     }
 }

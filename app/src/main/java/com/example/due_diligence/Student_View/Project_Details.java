@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.due_diligence.ModelClasses.Project;
@@ -56,4 +57,9 @@ public class Project_Details extends AppCompatActivity {
         }
     }
 
+    public void Add_Submission(View view) {
+        Intent intent = new Intent(this, Add_Submission.class);
+        intent.putExtra("project", project);
+        startActivity(intent);
+    }
 }
