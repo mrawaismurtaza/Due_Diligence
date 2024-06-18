@@ -14,7 +14,7 @@ public class Cloud_Storage {
     }
 
     public void uploadFile(Uri fileUri, String userId, String projectId, UploadCallback uploadCallback) {
-        StorageReference fileReference = storageReference.child("proposals/" + userId + "/" + projectId + "/" + fileUri.getLastPathSegment());
+        StorageReference fileReference = storageReference.child("proposals/"  + fileUri.getLastPathSegment());
         fileReference.putFile(fileUri).addOnSuccessListener(taskSnapshot -> {
             fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                 uploadCallback.onUploadCallback(uri.toString());
@@ -43,6 +43,21 @@ public class Cloud_Storage {
         }).addOnFailureListener(e -> {
             callback.onFileUrlCallback(null);
         });
+    }
+
+    public void addSubmission(Uri data, SubmissionCallback SubmissionCallback) {
+        StorageReference fileReference = storageReference.child("submissions/" + data.getLastPathSegment());
+        fileReference.putFile(data).addOnSuccessListener(taskSnapshot -> {
+            fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                SubmissionCallback.onUploadCallback(uri.toString());
+            });
+        }).addOnFailureListener(e -> {
+            SubmissionCallback.onUploadCallback(null);
+        });
+    }
+
+    public interface SubmissionCallback {
+        void onUploadCallback(String uri);
     }
 
     public interface FileUrlCallback {

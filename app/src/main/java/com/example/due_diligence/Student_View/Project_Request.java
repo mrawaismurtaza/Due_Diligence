@@ -22,6 +22,8 @@ public class Project_Request extends AppCompatActivity {
     Cloud_Storage storage;
     Realtime_Database database;
 
+    Home home;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +56,22 @@ public class Project_Request extends AppCompatActivity {
             storage = new Cloud_Storage();
             database = new Realtime_Database();
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            database.createProject(userId, "description", projectName.getText().toString(), TeacherEmail.getText().toString(), memberEmail.getText().toString(), new Realtime_Database.ProjectCreateCallback() {
+
+            storage.uploadFile(fileUri, userId, projectName.getText().toString(), new Cloud_Storage.UploadCallback() {
                 @Override
-                public void onProjectCallback(String projectId) {
-                    storage.uploadFile(fileUri, userId, projectId, new Cloud_Storage.UploadCallback() {
+                public void onUploadCallback(String url) {
+                    database.createProject(userId, "description", projectName.getText().toString(), TeacherEmail.getText().toString(), memberEmail.getText().toString(), url, new Realtime_Database.ProjectCreateCallback() {
                         @Override
-                        public void onUploadCallback(String url) {
-                            finish();
+                        public void onProjectCallback(String projectId) {
+                            if (projectId != null) {
+                                setResult(RESULT_OK);
+                                finish();
+                            }
                         }
                     });
                 }
             });
-
         }
     }
+
 }

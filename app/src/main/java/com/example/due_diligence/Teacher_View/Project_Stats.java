@@ -1,4 +1,4 @@
-package com.example.due_diligence.Student_View;
+package com.example.due_diligence.Teacher_View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +14,7 @@ import com.example.due_diligence.R;
 
 import java.util.List;
 
-public class Project_Details extends AppCompatActivity {
+public class Project_Stats extends AppCompatActivity {
 
     TextView project_title;
     TextView no_of_submissions;
@@ -24,19 +24,20 @@ public class Project_Details extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_project_details);
+        setContentView(R.layout.activity_project_stats);
 
         Log.d("TAG", "onCreate: ");
         Intent intent = getIntent();
         project = (Project) intent.getSerializableExtra("project");
         Log.d("TAG", "onCreate: ");
 
-
         project_title = findViewById(R.id.projtitletxt);
         no_of_submissions = findViewById(R.id.noofsubtxt);
         assigned = findViewById(R.id.assignedtxt);
-        
+
         setStats();
+
+
     }
 
     private void setStats() {
@@ -58,8 +59,14 @@ public class Project_Details extends AppCompatActivity {
         }
     }
 
-    public void Add_Submission(View view) {
-        Intent intent = new Intent(this, Add_Submission.class);
+    public void Check_Submissions(View view) {
+        Intent intent = new Intent(this, Submissions.class);
+        intent.putExtra("project", project);
+        startActivity(intent);
+    }
+
+    public void Assign_Task(View view) {
+        Intent intent = new Intent(this, New_Task.class);
         intent.putExtra("project", project);
         startActivity(intent);
     }

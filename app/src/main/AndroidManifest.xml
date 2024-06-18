@@ -13,6 +13,18 @@
         android:theme="@style/Theme.Due_Diligence"
         tools:targetApi="31">
         <activity
+            android:name=".Teacher_View.New_Task"
+            android:exported="false" />
+        <activity
+            android:name=".Teacher_View.Submissions"
+            android:exported="false" />
+        <activity
+            android:name=".Teacher_View.Project_Stats"
+            android:exported="false" />
+        <activity
+            android:name=".Teacher_View.Home_Teacher"
+            android:exported="false" />
+        <activity
             android:name=".Student_View.Add_Submission"
             android:exported="false" />
         <activity

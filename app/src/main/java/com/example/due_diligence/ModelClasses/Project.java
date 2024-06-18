@@ -8,6 +8,33 @@ public class Project implements Serializable {
     private String description;
     private String supervisor;
     private List<Task> tasks;
+    private String id;
+    private String proposalUrl;
+    private int submissionCount; // Use primitive int
+
+    public int getSubmissionCount() {
+        return submissionCount;
+    }
+
+    public void setSubmissionCount(int submissionCount) {
+        this.submissionCount = submissionCount;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getProposalUrl() {
+        return proposalUrl;
+    }
+
+    public void setProposalUrl(String proposalUrl) {
+        this.proposalUrl = proposalUrl;
+    }
 
     public String getName() {
         return name;
@@ -41,10 +68,13 @@ public class Project implements Serializable {
         this.tasks = tasks;
     }
 
-    public Project(String name, String description, String supervisor, List<Task> tasks) {
+    public Project(String name, String description, String supervisor, List<Task> tasks, String id, String proposalUrl, int submissionCount) {
         this.name = name;
         this.description = description;
         this.supervisor = supervisor;
         this.tasks = tasks;
+        this.id = id;
+        this.proposalUrl = proposalUrl;
+        this.submissionCount = submissionCount;
     }
 }

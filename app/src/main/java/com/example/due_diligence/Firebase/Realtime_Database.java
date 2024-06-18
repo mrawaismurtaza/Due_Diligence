@@ -47,7 +47,7 @@ public class Realtime_Database {
         Task task1 = new Task("Task 1", "completed");
         List<Task> taskList = new ArrayList<>();
         taskList.add(task1);
-        Project dummyProject = new Project("Dummy Project", "This is a dummy project", "Awais", taskList);
+        Project dummyProject = new Project("Dummy Project", "This is a dummy project", "Awais", taskList, "123", "sample proposal uri", 0);
         projectsRef.child(userId).push().setValue(dummyProject);
 
 
@@ -69,7 +69,10 @@ public class Realtime_Database {
                         Task task = new Task(taskName, taskStatus);
                         tasks.add(task);
                     }
-                    Project project = new Project(name, description, supervisor, tasks);
+                    String id = snapshot.child("id").getValue(String.class);
+                    String proposalUrl = snapshot.child("proposalUrl").getValue(String.class);
+                    int submissionCount = snapshot.child("submissionCount").getValue(int.class); // Use primitive int
+                    Project project = new Project(name, description, supervisor, tasks, id, proposalUrl, submissionCount);
                     projects.add(project);
                 }
                 projectCallback.onProjectCallback(projects);
@@ -82,13 +85,27 @@ public class Realtime_Database {
         });
     }
 
-    public void createProject(String userId, String description, String string, String string1, String string2, Realtime_Database.ProjectCreateCallback projectCreateCallback) {
+    public void createProject(String userId, String description, String name, String supervisor, String memberEmail, String url, Realtime_Database.ProjectCreateCallback projectCreateCallback) {
         String projectId = projectsRef.child(userId).push().getKey();
-        Task task1 = new Task("Proposal", "completed");
         List<Task> taskList = new ArrayList<>();
-        Project project = new Project(string, description, string1, taskList);
+        Project project = new Project(name, description, supervisor, taskList, projectId, url, 0);
         projectsRef.child(userId).child(projectId).setValue(project);
         projectCreateCallback.onProjectCallback(projectId);
+    }
+
+    public void addSubmission(String uri, Project project, Realtime_Database.SubmissionCallback submissionCallback) {
+        String userId = authentication.getCurrentUser().getUid();
+        int submissions = project.getSubmissionCount();
+        String id = project.getId();
+        Log.d("TAG", "addSubmission: " + id);
+        String name = project.getName();
+        String description = project.getDescription();
+        String supervisor = project.getSupervisor();
+        List<Task> tasks = project.getTasks();
+        String proposalUrl = project.getProposalUrl();
+        Project updatedProject = new Project(name, description, supervisor, tasks, id, proposalUrl, submissions + 1);
+        projectsRef.child(userId).child(id).setValue(updatedProject);
+        submissionCallback.onSubmissionCallback(id);
     }
 
 
@@ -152,5 +169,9 @@ public class Realtime_Database {
 
     public interface ProjectCreateCallback {
         void onProjectCallback(String projectId);
+    }
+
+    public interface SubmissionCallback {
+        void onSubmissionCallback(String submissionId);
     }
 }

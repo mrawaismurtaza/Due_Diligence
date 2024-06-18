@@ -1,5 +1,6 @@
 package com.example.due_diligence.Firebase;
 
+import android.util.Log;
 import android.view.View;
 
 import com.example.due_diligence.ModelClasses.User;
@@ -39,8 +40,10 @@ public class Authentication implements Serializable {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         callback.onLoginResult(true);
+                        Log.d("TAG", "loginUser: " + mAuth.getCurrentUser().getUid());
                     } else {
                         callback.onLoginResult(false);
+                        Log.d("TAG", "loginUser: " + task.getException().getMessage());
                     }
                 });
     }
