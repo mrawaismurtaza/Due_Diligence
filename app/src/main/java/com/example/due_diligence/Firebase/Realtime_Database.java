@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.example.due_diligence.ModelClasses.Notification;
 import com.example.due_diligence.ModelClasses.Project;
+import com.example.due_diligence.ModelClasses.Submission;
 import com.example.due_diligence.ModelClasses.Task;
 import com.example.due_diligence.ModelClasses.User;
 import com.google.firebase.database.DataSnapshot;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Realtime_Database {
 
     private FirebaseDatabase database;
-    private DatabaseReference usersRef, projectsRef, notificationsRef;
+    private DatabaseReference usersRef, projectsRef, notificationsRef, submissionsRef;
     private Authentication authentication;
 
     public Realtime_Database() {
@@ -27,6 +28,7 @@ public class Realtime_Database {
         usersRef = database.getReference("users");
         projectsRef = database.getReference("projects");
         notificationsRef = database.getReference("notifications");
+        submissionsRef = database.getReference("submissions");
         authentication = new Authentication();
     }
 
@@ -91,7 +93,7 @@ public class Realtime_Database {
         projectCreateCallback.onProjectCallback(projectId);
     }
 
-    public void addSubmission(String uri, Project project, Realtime_Database.SubmissionCallback submissionCallback) {
+    public void addSubmission(String detail, String uri, Project project, Realtime_Database.SubmissionCallback submissionCallback) {
         String userId = authentication.getCurrentUser().getUid();
         int submissions = project.getSubmissionCount();
         String id = project.getId();
@@ -103,6 +105,10 @@ public class Realtime_Database {
         String proposalUrl = project.getProposalUrl();
         Project updatedProject = new Project(userId, name, description, supervisor, tasks, id, proposalUrl, submissions + 1);
         projectsRef.child(id).setValue(updatedProject);
+
+        String submissionId = submissionsRef.push().getKey();
+        Submission submission = new Submission(submissionId, id, uri, detail);
+        submissionsRef.child(submissionId).setValue(submission);
         submissionCallback.onSubmissionCallback(id);
     }
 
@@ -150,6 +156,33 @@ public class Realtime_Database {
         tasks.add(task);
         Project updatedProject = new Project(project.getStudentId(), project.getName(), project.getDescription(), project.getSupervisor(), tasks, id, project.getProposalUrl(), project.getSubmissionCount());
         projectsRef.child(id).setValue(updatedProject);
+    }
+
+    public void getSubmissions(String id, GetSubmissionCallback submissionCallback) {
+        submissionsRef.orderByChild("projectId").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Submission> submissions = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String submissionId = snapshot.child("id").getValue(String.class);
+                    String projectId = snapshot.child("projectId").getValue(String.class);
+                    String uri = snapshot.child("uri").getValue(String.class);
+                    String detail = snapshot.child("detail").getValue(String.class);
+                    Submission submission = new Submission(submissionId, projectId, uri, detail);
+                    submissions.add(submission);
+                }
+                submissionCallback.onSubmissionCallback(submissions);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("TAG", "onCancelled: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    public interface GetSubmissionCallback {
+        void onSubmissionCallback(List<Submission> submissions);
     }
 
     // For getting User Details from REALTIME
