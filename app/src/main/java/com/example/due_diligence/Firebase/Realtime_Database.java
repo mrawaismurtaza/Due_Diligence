@@ -1,6 +1,5 @@
 package com.example.due_diligence.Firebase;
 
-import android.icu.text.UnicodeSet;
 import android.util.Log;
 import android.view.View;
 
@@ -31,7 +30,6 @@ public class Realtime_Database {
         authentication = new Authentication();
     }
 
-
     public void addUser(String email, String name, String role, View view) {
         String userId = authentication.getCurrentUser().getUid();
         Log.d("TAG", "addUser: " + userId);
@@ -41,20 +39,20 @@ public class Realtime_Database {
         usersRef.child(userId).child("name").setValue(user.getName());
         usersRef.child(userId).child("role").setValue(user.getRole());
 
-        Notification dummyNotification = new Notification("Welcome to the app!", false);
-        notificationsRef.child(userId).push().setValue(dummyNotification);
+        Notification dummyNotification = new Notification("Welcome to the app!", false, userId);
+        notificationsRef.push().setValue(dummyNotification);
 
         Task task1 = new Task("Task 1", "completed");
         List<Task> taskList = new ArrayList<>();
         taskList.add(task1);
-        Project dummyProject = new Project("Dummy Project", "This is a dummy project", "Awais", taskList, "123", "sample proposal uri", 0);
-        projectsRef.child(userId).push().setValue(dummyProject);
-
-
+        String projectId = projectsRef.push().getKey();
+        Project dummyProject = new Project(userId, "Dummy Project", "This is a dummy project", "Awais", taskList, projectId, "sample proposal uri", 0);
+        projectsRef.child(projectId).setValue(dummyProject);
     }
 
+
     public void getProjects(String userId, Realtime_Database.ProjectCallback projectCallback) {
-        projectsRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        projectsRef.orderByChild("studentId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Project> projects = new ArrayList<>();
@@ -72,7 +70,7 @@ public class Realtime_Database {
                     String id = snapshot.child("id").getValue(String.class);
                     String proposalUrl = snapshot.child("proposalUrl").getValue(String.class);
                     int submissionCount = snapshot.child("submissionCount").getValue(int.class); // Use primitive int
-                    Project project = new Project(name, description, supervisor, tasks, id, proposalUrl, submissionCount);
+                    Project project = new Project(userId, name, description, supervisor, tasks, id, proposalUrl, submissionCount);
                     projects.add(project);
                 }
                 projectCallback.onProjectCallback(projects);
@@ -86,10 +84,10 @@ public class Realtime_Database {
     }
 
     public void createProject(String userId, String description, String name, String supervisor, String memberEmail, String url, Realtime_Database.ProjectCreateCallback projectCreateCallback) {
-        String projectId = projectsRef.child(userId).push().getKey();
+        String projectId = projectsRef.push().getKey();
         List<Task> taskList = new ArrayList<>();
-        Project project = new Project(name, description, supervisor, taskList, projectId, url, 0);
-        projectsRef.child(userId).child(projectId).setValue(project);
+        Project project = new Project(userId, name, description, supervisor, taskList, projectId, url, 0);
+        projectsRef.child(projectId).setValue(project);
         projectCreateCallback.onProjectCallback(projectId);
     }
 
@@ -103,13 +101,58 @@ public class Realtime_Database {
         String supervisor = project.getSupervisor();
         List<Task> tasks = project.getTasks();
         String proposalUrl = project.getProposalUrl();
-        Project updatedProject = new Project(name, description, supervisor, tasks, id, proposalUrl, submissions + 1);
-        projectsRef.child(userId).child(id).setValue(updatedProject);
+        Project updatedProject = new Project(userId, name, description, supervisor, tasks, id, proposalUrl, submissions + 1);
+        projectsRef.child(id).setValue(updatedProject);
         submissionCallback.onSubmissionCallback(id);
     }
 
+    public void getTeacherProjects(String email, Realtime_Database.TeacherProjectCallback teacherProjectCallback) {
+        projectsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Project> projects = new ArrayList<>();
+                for (DataSnapshot projectSnapshot : dataSnapshot.getChildren()) {
+                    String supervisor = projectSnapshot.child("supervisor").getValue(String.class);
+                    if (supervisor != null && supervisor.equals(email)) {
+                        Log.d("TAG", "onDataChange: " + projectSnapshot.child("supervisor").getValue(String.class));
+                        String name = projectSnapshot.child("name").getValue(String.class);
+                        String description = projectSnapshot.child("description").getValue(String.class);
+                        List<Task> tasks = new ArrayList<>();
+                        for (DataSnapshot taskSnapshot : projectSnapshot.child("tasks").getChildren()) {
+                            String taskName = taskSnapshot.child("name").getValue(String.class);
+                            String taskStatus = taskSnapshot.child("status").getValue(String.class);
+                            Task task = new Task(taskName, taskStatus);
+                            tasks.add(task);
+                        }
+                        String id = projectSnapshot.child("id").getValue(String.class);
+                        String proposalUrl = projectSnapshot.child("proposalUrl").getValue(String.class);
+                        int submissionCount = projectSnapshot.child("submissionCount").getValue(int.class);
+                        // Use primitive int
+                        String studentId = projectSnapshot.child("studentId").getValue(String.class);
+                        Project project = new Project(studentId, name, description, supervisor, tasks, id, proposalUrl, submissionCount);
+                        projects.add(project);
+                    }
+                }
+                teacherProjectCallback.onProjectCallback(projects);
+            }
 
-    //For getting User Deatails from REALTIME
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("TAG", "onCancelled: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    public void addTask(String taskName, Project project) {
+        String id = project.getId();
+        List<Task> tasks = project.getTasks();
+        Task task = new Task(taskName, "pending");
+        tasks.add(task);
+        Project updatedProject = new Project(project.getStudentId(), project.getName(), project.getDescription(), project.getSupervisor(), tasks, id, project.getProposalUrl(), project.getSubmissionCount());
+        projectsRef.child(id).setValue(updatedProject);
+    }
+
+    // For getting User Details from REALTIME
 
     public interface UserCallback {
         void onUserCallback(User user);
@@ -133,6 +176,7 @@ public class Realtime_Database {
                     Log.d("TAG", "Data snapshot does not exist");
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("TAG", "Database error: " + databaseError.getMessage());
@@ -140,15 +184,14 @@ public class Realtime_Database {
         });
     }
 
-
-    //For getting Notifications from REALTIME
+    // For getting Notifications from REALTIME
 
     public interface NotificationCallback {
         void onNotificationCallback(int count);
     }
 
     public void getNotifications(String userId, NotificationCallback notificationCallback) {
-        usersRef.child("notifications").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        notificationsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long count = dataSnapshot.getChildrenCount();
@@ -162,6 +205,7 @@ public class Realtime_Database {
         });
     }
 
+    // get projects by getting teacher email and check it if it is in project supervisor
 
     public interface ProjectCallback {
         void onProjectCallback(List<Project> projects);
@@ -173,5 +217,9 @@ public class Realtime_Database {
 
     public interface SubmissionCallback {
         void onSubmissionCallback(String submissionId);
+    }
+
+    public interface TeacherProjectCallback {
+        void onProjectCallback(List<Project> projects);
     }
 }

@@ -1,8 +1,19 @@
 package com.example.due_diligence.ModelClasses;
 
 public class Notification {
+
+
+    private String userId;
     private String message;
     private Boolean isRead;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getMessage() {
         return message;
@@ -20,8 +31,10 @@ public class Notification {
         isRead = read;
     }
 
-    public Notification(String message, Boolean isRead) {
+    public Notification(String message, Boolean isRead, String userId) {
         this.message = message;
         this.isRead = isRead;
+        this.userId = userId;
     }
+
 }

@@ -4,6 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Project implements Serializable {
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    private String studentId;
     private String name;
     private String description;
     private String supervisor;
@@ -68,7 +78,8 @@ public class Project implements Serializable {
         this.tasks = tasks;
     }
 
-    public Project(String name, String description, String supervisor, List<Task> tasks, String id, String proposalUrl, int submissionCount) {
+    public Project(String studentId, String name, String description, String supervisor, List<Task> tasks, String id, String proposalUrl, int submissionCount) {
+        this.studentId = studentId;
         this.name = name;
         this.description = description;
         this.supervisor = supervisor;

@@ -30,6 +30,7 @@ public class Home_Teacher extends AppCompatActivity {
     TextView welcomenametxt, notification;
     private Authentication mAuth;
     Realtime_Database database;
+    User Userr;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -53,47 +54,57 @@ public class Home_Teacher extends AppCompatActivity {
             String userId = mAuth.getCurrentUser().getUid();
             database = new Realtime_Database();
 
-            database.getUser(userId, new Realtime_Database.UserCallback() {
-                @Override
-                public void onUserCallback(User user) {
-                    welcomenametxt.setText(user.getName().toString());
-                    database.getNotifications(userId, new Realtime_Database.NotificationCallback() {
-                        @Override
-                        public void onNotificationCallback(int count) {
-                            notification.setText(String.valueOf(count));
-                        }
-                    });
-                }
-            });
 
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            database.getProjects(userId, new Realtime_Database.ProjectCallback() {
-                @Override
-                public void onProjectCallback(List<Project> projects) {
-                    Adapter_Home_Projects adapter = new Adapter_Home_Projects( Home_Teacher.this, projects);
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
 
-                    adapter.setOnItemClickListener(new Adapter_Home_Projects.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(int position) {
-                            Intent intent = new Intent(Home_Teacher.this, Project_Stats.class);
-                            Project selectedProject = projects.get(position);
-                            if (selectedProject != null) {
-                                Log.d("TAG", "onItemClick: " + selectedProject.getName());
-                                intent.putExtra("project", selectedProject);
-                                startActivity(intent);
-                            } else {
-                                Snackbar.make(getCurrentFocus(), "Project not found", Snackbar.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            database.getUser(userId, new Realtime_Database.UserCallback() {
+                @Override
+                public void onUserCallback(User user) {
+                    setUser_Details(user, userId);
                 }
+
+
             });
+
+
 
         } else {
             Snackbar.make(this.getCurrentFocus(), "User not found", Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    private void setUser_Details(User user, String userId) {
+        String email = user.getEmail();
+        welcomenametxt.setText(user.getName().toString());
+        database.getNotifications(userId, new Realtime_Database.NotificationCallback() {
+            @Override
+            public void onNotificationCallback(int count) {
+                notification.setText(String.valueOf(count));
+                database.getTeacherProjects(email, new Realtime_Database.TeacherProjectCallback() {
+                    @Override
+                    public void onProjectCallback(List<Project> projects) {
+                        Adapter_Home_Projects adapter = new Adapter_Home_Projects( Home_Teacher.this, projects);
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                        adapter.setOnItemClickListener(new Adapter_Home_Projects.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                Intent intent = new Intent(Home_Teacher.this, Project_Stats.class);
+                                Project selectedProject = projects.get(position);
+                                if (selectedProject != null) {
+                                    Log.d("TAG", "onItemClick: " + selectedProject.getName());
+                                    intent.putExtra("project", selectedProject);
+                                    startActivity(intent);
+                                } else {
+                                    Snackbar.make(getCurrentFocus(), "Project not found", Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 }
