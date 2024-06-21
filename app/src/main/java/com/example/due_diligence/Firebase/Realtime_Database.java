@@ -164,9 +164,9 @@ public class Realtime_Database {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Submission> submissions = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String submissionId = snapshot.child("id").getValue(String.class);
+                    String submissionId = snapshot.child("submissionId").getValue(String.class);
                     String projectId = snapshot.child("projectId").getValue(String.class);
-                    String uri = snapshot.child("uri").getValue(String.class);
+                    String uri = snapshot.child("submissionURL").getValue(String.class);
                     String detail = snapshot.child("detail").getValue(String.class);
                     Submission submission = new Submission(submissionId, projectId, uri, detail);
                     submissions.add(submission);
@@ -220,15 +220,24 @@ public class Realtime_Database {
     // For getting Notifications from REALTIME
 
     public interface NotificationCallback {
-        void onNotificationCallback(int count);
+        void onNotificationCallback(int count, ArrayList<Notification> notifications);
     }
 
     public void getNotifications(String userId, NotificationCallback notificationCallback) {
+
+        ArrayList<Notification> notifications = new ArrayList<>();
         notificationsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long count = dataSnapshot.getChildrenCount();
-                notificationCallback.onNotificationCallback((int) count);
+                int count = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String message = snapshot.child("message").getValue(String.class);
+                    Boolean isRead = snapshot.child("read").getValue(Boolean.class);
+                    Notification notification = new Notification(message, isRead, userId);
+                    notifications.add(notification);
+                    count++;
+                }
+                notificationCallback.onNotificationCallback(count, notifications);
             }
 
             @Override

@@ -11,17 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.due_diligence.ModelClasses.Submission;
 import com.example.due_diligence.R;
-import com.example.due_diligence.Teacher_View.Submissions;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
-public class Adapter_Submissions extends RecyclerView.Adapter<Adapter_Submissions.ViewHolder>{
+public class Adapter_Submissions extends RecyclerView.Adapter<Adapter_Submissions.ViewHolder> {
 
     private List<Submission> submissions;
     private Context context;
-
     private OnItemClickListener mListener;
 
     public Adapter_Submissions(List<Submission> submissions, Context context) {
@@ -51,7 +47,7 @@ public class Adapter_Submissions extends RecyclerView.Adapter<Adapter_Submission
 
         TextView submissionDetail;
 
-        public ViewHolder(@NonNull View itemView, Adapter_Submissions.OnItemClickListener listener) {
+        public ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             submissionDetail = itemView.findViewById(R.id.submissiondetail);
 
@@ -69,8 +65,7 @@ public class Adapter_Submissions extends RecyclerView.Adapter<Adapter_Submission
         }
     }
 
-
-    public void setOnItemClickListener(Adapter_Submissions.OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
 

@@ -9,6 +9,7 @@
 
 
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="412dp"
@@ -50,7 +51,7 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/notification_icon_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="340dp"
@@ -109,5 +110,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.924" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

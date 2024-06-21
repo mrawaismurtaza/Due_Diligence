@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.due_diligence"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 28
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 

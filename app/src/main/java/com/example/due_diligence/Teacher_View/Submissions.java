@@ -6,11 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.due_diligence.Adapter_Classes.Adapter_Submissions;
+import com.example.due_diligence.Firebase.Cloud_Storage;
 import com.example.due_diligence.Firebase.Realtime_Database;
 import com.example.due_diligence.ModelClasses.Project;
 import com.example.due_diligence.ModelClasses.Submission;
@@ -24,6 +26,7 @@ public class Submissions extends AppCompatActivity {
     TextView projectname;
     Realtime_Database database;
     Project project;
+    Cloud_Storage cloud_storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,21 @@ public class Submissions extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
 
-                adapter.setOnItemClickListener(new Adapter_Submissions.OnItemClickListener(){
+                adapter.setOnItemClickListener(new Adapter_Submissions.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-
+                        cloud_storage = new Cloud_Storage();
+                        Submission selectedSubmission = submissions.get(position);
+                        if (selectedSubmission != null) {
+                            Log.d("TAG", "onItemClick: " + selectedSubmission.getSubmissionURL());
+                            cloud_storage.downloadFile(Submissions.this, selectedSubmission, selectedSubmission.getSubmissionURL());
+                        } else {
+                            Log.d("TAG", "onItemClick: " + "No Submission Found");
+                        }
                     }
                 });
-        }
-    });
+            }
+        });
     }
 
     public void Back(View view) {
